@@ -30,13 +30,15 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         backgroundColor: 'whitesmoke',
-        padding: 5,
+        paddingTop: 6,
         paddingHorizontal: 10,
         alignItems: 'center',
+      
     },
 
     input: {
         flex: 1,
+        height: 35,
         backgroundColor: 'white',
         padding: 5,
         borderRadius: 50,
@@ -44,7 +46,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         borderColor: 'lightgray',
         borderWidth: StyleSheet.hairlineWidth,
-        fontSize: 15
+        fontSize: 15,
+
     },
     send: {
         backgroundColor: 'royalblue',

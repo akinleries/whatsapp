@@ -36,21 +36,22 @@ const MainTabNavigator = () => {
                 }}
             />
             <Tab.Screen name="Chats" component={ChatsScreen}
-                options={{
+                options={({ navigation }) => ({
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="ios-chatbubbles-sharp" size={size} color={color} />
                     ),
                     headerRight: () => (
                         <Entypo
+                            onPress={() => navigation.navigate('contact')}
                             name="new-message"
                             size={18}
                             color={"royalblue"}
                             style={{ marginRight: 15 }}
                         />
                     ),
-                }}
+                })}
             />
-            <Tab.Screen name="Ch" component={NotImplementedScreen}
+            <Tab.Screen name="Settings" component={NotImplementedScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="settings-outline" size={size} color={color} />
