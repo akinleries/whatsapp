@@ -1,9 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import ChatsScreen from './src/screens/ChatsScreen';
-import ChatScreen from './src/screens/ChatScreen';
-import Message from "./src/components/message";
 import Navigator from './src/navigation';
+import { Amplify } from 'aws-amplify'
+import awsconfig from './src/aws-exports'
+import { withAuthenticator } from "aws-amplify-react-native";
+
+Amplify.configure({ ...awsconfig, Analytics: { disabled: true } })
 
 // const chat = {
 //   id: "1",
@@ -18,13 +20,13 @@ import Navigator from './src/navigation';
 //   },
 // };
 
-export default function App() {
+function App() {
   return (
     <View style={styles.container}>
 
       <Navigator />
-     
-   
+
+
       <StatusBar style="auto" />
     </View>
   );
@@ -35,6 +37,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'whitesmoke',
     justifyContent: 'center',
-   
+
   },
 });
+
+export default withAuthenticator(App);
