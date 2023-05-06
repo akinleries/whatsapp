@@ -9,7 +9,7 @@ const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
     return (
-        <Tab.Navigator initialRouteName="chats"
+        <Tab.Navigator initialRouteName="Chats"
             screenOptions={{
                 tabBarStyle: { backgroundColor: "whitesmoke" },
                 headerStyle: { backgroundColor: "whitesmoke" },
