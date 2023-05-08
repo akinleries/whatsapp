@@ -1,4 +1,4 @@
-export const listChatRooms  = /* GraphQL */ `
+export const listChatRooms = /* GraphQL */ `
     query GetUser ($id : ID!) {
   getUser(id: $id) {
     id
@@ -6,6 +6,7 @@ export const listChatRooms  = /* GraphQL */ `
       items {
         chatRoom {
           id
+          updatedAt
           users {
             items {
               user {

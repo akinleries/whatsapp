@@ -2,15 +2,28 @@ import { StyleSheet, TextInput } from 'react-native'
 import { useState } from 'react';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { API, graphqlOperation, Auth } from "aws-amplify";
+import { createMessage, updateChatRoom } from "../../graphql/mutations";
 
-const InputBox = () => {
+const InputBox = ({ chatroom }) => {
 
-    const [newMessage, setNewMessage] = useState('');
+    const [text, setText] = useState('');
 
-    const onSend = () => {
-        console.warn("Sending");
+    const onSend = async () => {
 
-        setNewMessage('');
+        const authUser = await Auth.currentAuthenticatedUser();
+
+        const newMessage = {
+            chatroomID: chatroom.id, text, userID: authUser.attributes.sub
+        }
+
+        const newMessageData = await API.graphql(graphqlOperation(createMessage, { input: newMessage }));
+
+        setText('');
+
+        await API.graphql(graphqlOperation(updateChatRoom, { input: { _version: chatroom._version, chatRoomLastMessageId: newMessageData.data.createMessage.id, id: chatroom.id } }))
+
+
 
     };
 
@@ -18,7 +31,7 @@ const InputBox = () => {
     return (
         <SafeAreaView edges={['bottom']} style={styles.container}>
             <AntDesign name="plus" size={24} color="royalblue" />
-            <TextInput value={newMessage} onChangeText={setNewMessage} placeholder="type your message..." style={styles.input} />
+            <TextInput value={text} onChangeText={setText} placeholder="type your message..." style={styles.input} />
             <MaterialIcons onPress={onSend} name="send" style={styles.send} size={16} color="white" />
         </SafeAreaView>
     )
@@ -33,7 +46,7 @@ const styles = StyleSheet.create({
         paddingTop: 6,
         paddingHorizontal: 10,
         alignItems: 'center',
-      
+
     },
 
     input: {
