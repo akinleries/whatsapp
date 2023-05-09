@@ -8,12 +8,14 @@ import { useEffect, useState } from 'react';
 import { graphqlOperation, API, Auth } from 'aws-amplify';
 import { getChatRoom, listMessagesByChatRoom } from './../graphql/queries';
 import { ActivityIndicator } from 'react-native';
+import { onCreateMessage, onUpdateChatRoom } from "../graphql/subscriptions";
 
 
 const ChatScreen = () => {
 
     const [chatRoom, setChatRoom] = useState(null);
     const [messages, setMessages] = useState([]);
+
 
     const route = useRoute();
     const navigation = useNavigation();
@@ -22,19 +24,37 @@ const ChatScreen = () => {
 
 
     useEffect(() => {
-        API.graphql(graphqlOperation(getChatRoom, { id: chatroomID })).then((result) => {
-            setChatRoom(result.data.getChatRoom)
+
+        API.graphql(graphqlOperation(getChatRoom, { id: chatroomID })).then((result) => setChatRoom(result.data?.getChatRoom));
+
+        const subscription = API.graphql(graphqlOperation(onUpdateChatRoom, { filter: { id: { eq: chatroomID } } })).subscribe({
+            next: ({ value }) => {
+                setChatRoom((chatRoom) => ({ ...(chatRoom || {}), ...value.data.onUpdateChatRoom }))
+            },
+            error: (err) => console.warn(err)
         });
-    }, [chatroomID])
+
+        return () => subscription.unsubscribe();
+    }, [chatroomID]);
 
     useEffect(() => {
         API.graphql(graphqlOperation(listMessagesByChatRoom, { chatroomID, sortDirection: "DESC" })).then((result) => {
             setMessages(result.data?.listMessagesByChatRoom?.items)
         });
+
+
+        const subscription = API.graphql(graphqlOperation(onCreateMessage, { filter: { chatroomID: { eq: chatroomID } } })).subscribe({
+            next: ({ value }) => {
+                setMessages((message) => [...message, value.data.onCreateMessage])
+            },
+            error: (err) => console.warn(err)
+        });
+
+        return () => subscription.unsubscribe();
     }, [chatroomID]);
 
 
-  
+
 
     useEffect(() => {
         navigation.setOptions({ title: route.params.name });

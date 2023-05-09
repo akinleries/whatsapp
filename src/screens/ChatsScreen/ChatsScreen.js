@@ -9,8 +9,11 @@ import { useEffect, useState } from 'react';
 const ChatsScreen = () => {
 
   const [chatRooms, setChatRooms] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchChatRooms = async () => {
+
+    setLoading(true);
 
     const authUser = await Auth.currentAuthenticatedUser();
 
@@ -21,6 +24,7 @@ const ChatsScreen = () => {
     const sortedRooms = rooms.sort((room1, room2) => new Date(room1.chatRoom.updatedAt) - new Date(room2.chatRoom.updatedAt));
 
     setChatRooms(sortedRooms);
+    setLoading(false);
   }
 
 
@@ -32,9 +36,9 @@ const ChatsScreen = () => {
     <FlatList
       data={chatRooms}
       renderItem={({ item }) =>
-        <ChatListItem chat={item.chatRoom}
-        />
-      }
+        <ChatListItem chat={item.chatRoom}/> }
+        refreshing={loading}
+        onRefresh={fetchChatRooms}
     />
   );
 }
